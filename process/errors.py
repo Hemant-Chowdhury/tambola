@@ -1,0 +1,2 @@
+class DataObjectError(Exception):
+    pass

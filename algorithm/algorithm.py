@@ -1,7 +1,8 @@
+#TODO Create a more sparsely generated ticket numbers
 import random
 
 
-class ticket_generator(object):
+class TicketGenerator(object):
     """docstring for ticket_generator"""
 
     def __init__(self, rows, columns, numbers_in_each_line):
