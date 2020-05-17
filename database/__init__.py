@@ -1,7 +1,7 @@
-from database.boards import Boards
-from database.groups import Groups
-from database.participants import Participants
-from database.tickets import Tickets
+from database.boards_table import Boards
+from database.groups_table import Groups
+from database.participants_table import Participants
+from database.tickets_table import Tickets
 
 
 groups_table = Groups.get_instance()
