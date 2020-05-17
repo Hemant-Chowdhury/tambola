@@ -1,3 +1,4 @@
+import sqlite3
 from abc import ABCMeta, abstractmethod
 
 DATABASE = 'tumbola.db'
@@ -9,6 +10,9 @@ class Table(metaclass=ABCMeta):
 
     def __init__(self, table_name):
         self.table_name = table_name
+        self.connection = sqlite3.connect(DATABASE)
+        self.connection.execute("PRAGMA foreign_keys = ON")
+        self.cursor_obj = self.connection.cursor()
         self.create_table()
 
     @classmethod
