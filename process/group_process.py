@@ -15,14 +15,14 @@ class GroupProcess(object):
         if database.groups_table.exists(group) is False:
             raise GroupProcessError("Cannot create group process for non existent group")
         self.group = group
-        self.participants: List[ParticipantProcess] = list()
+        self.participant_process_list: List[ParticipantProcess] = list()
         self._init_participants()
         self.board_process: Optional[BoardProcess] = None
         self._init_board()
 
     def _init_participants(self):
         for participant in database.participants_table.fetch_participants_in_a_group(self.group):
-            self.participants.append(ParticipantProcess(participant))
+            self.participant_process_list.append(ParticipantProcess(participant))
 
     def _init_board(self):
         board = database.boards_table.fetch_board(self.group)
@@ -49,18 +49,18 @@ class GroupProcess(object):
         participant_process = ParticipantProcess.get_new_participant(
             participant_name=participant_name,
             group_name=self.group.group_name)
-        self.participants.append(participant_process)
+        self.participant_process_list.append(participant_process)
         return participant_process
 
     def remove_participant(self, participant_process_obj: ParticipantProcess):
         database.participants_table.delete(participant_process_obj.participant)
-        self.participants.remove(participant_process_obj)
+        self.participant_process_list.remove(participant_process_obj)
 
     def refresh_group_variables(self):
         try:
             self.board_process.refresh_board()
             database.tickets_table.delete_all_tickets_in_a_group(self.group)
-            for participant in self.participants:
+            for participant in self.participant_process_list:
                 participant.clear_tickets()
         except DatabaseOperationError:
             raise GroupProcessError('Unable to start a new game, try again!')
