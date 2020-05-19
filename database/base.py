@@ -1,7 +1,7 @@
 import sqlite3
 from abc import ABCMeta, abstractmethod
 
-DATABASE = 'tumbola.db'
+DATABASE = 'tambola.db'
 
 
 class Table(metaclass=ABCMeta):
