@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Optional, Tuple
 import database
 from algorithm.algorithm import TicketGenerator
-from data import Ticket
+from data import Ticket, Participant
 from process.errors import TicketProcessError
 
 COLUMNS = 9
@@ -59,3 +59,13 @@ class TicketProcess(object):
     def numbers(self):
         return self._numbers
 
+    def locate_number(self, number) -> Optional[Tuple[int, int]]:
+        for row_index, row in enumerate(self._numbers):
+            for col_index, present_number in enumerate(row):
+                if number == present_number:
+                    return row_index, col_index
+        return None
+
+    def get_participant(self):
+        return Participant(participant_name=self.ticket.participant_name,
+                           group_name=self.ticket.group_name)

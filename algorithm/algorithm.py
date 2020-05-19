@@ -1,4 +1,4 @@
-#TODO Create a more sparsely generated ticket numbers
+# TODO Create a more sparsely generated ticket numbers
 import random
 
 

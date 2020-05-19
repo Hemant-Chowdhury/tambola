@@ -52,12 +52,7 @@ class BoardProcess(object):
             sequence_str += f'{number}_'
         return sequence_str
 
-    @property
-    def pointer(self):
-        return self.board.pointer
-
-    @property
-    def checked_numbers(self) -> List[int]:
+    def get_checked_numbers(self) -> List[int]:
         return self._sequence_numbers[:self.board.pointer]
 
     def get_next_number(self) -> int:
@@ -73,7 +68,7 @@ class BoardProcess(object):
         return next_number
 
     def is_checked(self, number) -> bool:
-        if number in self.checked_numbers:
+        if number in self.get_checked_numbers():
             return True
         return False
 

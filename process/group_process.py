@@ -27,8 +27,9 @@ class GroupProcess(object):
     def _init_board(self):
         board = database.boards_table.fetch_board(self.group)
         if board is None:
-            board = BoardProcess.get_new_board(self.group.group_name)
-        self.board_process = board
+            self.board_process = BoardProcess.get_new_board(self.group.group_name)
+            return
+        self.board_process = BoardProcess(board=board)
 
     @staticmethod
     def get_new_group(group_name):

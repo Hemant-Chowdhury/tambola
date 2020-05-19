@@ -1,7 +1,7 @@
 from tkinter import Tk, messagebox, Label, Canvas, Scrollbar, Frame, LabelFrame, Button, Entry
 from typing import List
 
-# from gui.board_gui import game_view
+from gui.group_gui import GroupWindow
 from process import game_process, GroupProcess, ProcessError
 
 ROW = 500
@@ -20,26 +20,35 @@ class GroupsView(object):
         self.add_groups_frame.pack(fill="both")
 
     def create_a_scrollable_groups_frame(self, height):
-        scrollable_frame = Frame(self.master, relief='sunken', bd=4)
+        scrollable_frame = Frame(self.master,
+                                 relief='sunken',
+                                 bd=4)
         scrollable_frame.pack(fill="both")
-        canvas = Canvas(scrollable_frame, bg='#ccff99', height=height)
+        canvas = Canvas(scrollable_frame,
+                        bg='#ccff99',
+                        height=height)
         custom_frame = AllGroupsFrame(canvas)
 
-        scrollbar = Scrollbar(scrollable_frame, orient="vertical", command=canvas.yview)
+        scrollbar = Scrollbar(scrollable_frame,
+                              orient="vertical",
+                              command=canvas.yview)
         canvas.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side='right', fill='y')
         canvas.pack(fill='both')
 
         self.master.update()
-        canvas.create_window((0, 0), window=custom_frame, anchor='nw', width=canvas.winfo_width() - 2)
-        custom_frame.bind("<Configure>", lambda: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.create_window((0, 0),
+                             window=custom_frame,
+                             anchor='nw',
+                             width=canvas.winfo_width() - 2)
+        custom_frame.bind("<Configure>", lambda _: canvas.configure(scrollregion=canvas.bbox("all")))
         return custom_frame
 
     def add_in_groups_frame(self, group_process: GroupProcess):
         self.groups_frame.add_group_in_frame(GroupLabelFrame(self.groups_frame, group_process))
 
-    # def open_board(self, group_name):
-    #     game_view(self.master, group_name)
+    def open_group(self, group_process):
+        GroupWindow(self.master, group_process)
 
 
 class AddGroupsFrame(Frame):
@@ -83,8 +92,7 @@ class GroupLabelFrame(LabelFrame):
         self.master.delete_group_from_frame(self)
 
     def view(self):
-        pass
-        # main_view.open_board(self.group_process)
+        main_view.open_group(self.group_process)
 
 
 class AllGroupsFrame(Frame):
@@ -119,3 +127,8 @@ ROOT.geometry(f'{ROW}x{COL}')
 # master.resizable(False, False)
 main_view = GroupsView(ROOT)
 ROOT.mainloop()
+
+
+# TODO make icon and title for widows
+# TODO make sequence list in Board Frame
+# TODO share image functionality

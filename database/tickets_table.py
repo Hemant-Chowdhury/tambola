@@ -120,3 +120,17 @@ class Tickets(Table):
                     participant_name=participant_obj.participant_name,
                     group_name=participant_obj.group_name))
         return result
+
+    def tickets_exist_in_group(self, group_object: Group):
+        self.cursor_obj.execute(
+            """
+            SELECT *
+            FROM {} 
+            WHERE 
+            group_name=:group_name
+            """.format(self.table_name),
+            {
+                'group_name': group_object.group_name
+            })
+        fetch_result = self.cursor_obj.fetchone()
+        return fetch_result is not None

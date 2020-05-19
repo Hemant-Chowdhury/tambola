@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List
 from database.errors import DatabaseOperationError
 from process.errors import ParticipantProcessError
 from process.ticket_process import TicketProcess
@@ -14,11 +14,13 @@ class ParticipantProcess(object):
         if database.participants_table.exists(participant) is False:
             raise ParticipantProcessError("Participant process cannot be created non existent participant")
         self.participant = participant
-        self.tickets: List[TicketProcess] = list()
+        self.ticket_process_list: List[TicketProcess] = list()
         self._init_tickets()
 
     def _init_tickets(self):
-        self.tickets = database.tickets_table.fetch_tickets_of_a_participant_in_a_group(self.participant)
+        ticket_list = database.tickets_table.fetch_tickets_of_a_participant_in_a_group(self.participant)
+        for ticket in ticket_list:
+            self.ticket_process_list.append(TicketProcess(ticket=ticket))
 
     @staticmethod
     def get_new_participant(participant_name, group_name):
@@ -43,15 +45,12 @@ class ParticipantProcess(object):
             participant_name=self.participant.participant_name,
             group_name=self.participant.group_name
         )
-        self.tickets.append(new_ticket_process)
+        self.ticket_process_list.append(new_ticket_process)
         return new_ticket_process
 
     def delete_ticket(self, ticket_process: TicketProcess):
         database.tickets_table.delete(ticket_process.ticket)
-        self.tickets.remove(ticket_process)
+        self.ticket_process_list.remove(ticket_process)
 
     def clear_tickets(self):
-        self.tickets.clear()
-
-
-
+        self.ticket_process_list.clear()
