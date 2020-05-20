@@ -1,8 +1,8 @@
-from tkinter import Tk, messagebox, Label, Canvas, Scrollbar, Frame, LabelFrame, Button, Entry
+from tkinter import Tk, messagebox, Label, Canvas, Scrollbar, Frame, LabelFrame, Button, Entry, PhotoImage
 from typing import List
 
-from gui.group_gui import GroupWindow
 from process import game_process, GroupProcess, ProcessError
+from gui.group_gui import GroupWindow
 
 ROW = 500
 COL = 500
@@ -123,12 +123,14 @@ class AllGroupsFrame(Frame):
 
 
 ROOT = Tk()
+ROOT.title("Tambola")
+photo = PhotoImage('resources/icon.ico')
+ROOT.iconphoto(False, photo)
 ROOT.geometry(f'{ROW}x{COL}')
 # master.resizable(False, False)
 main_view = GroupsView(ROOT)
 ROOT.mainloop()
 
 
-# TODO make icon and title for widows
 # TODO make sequence list in Board Frame
 # TODO share image functionality

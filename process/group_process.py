@@ -1,10 +1,10 @@
 from typing import List, Optional
 import database
 from database.errors import DatabaseOperationError
-from process.errors import GroupProcessError, BoardProcessError
+from process.errors import GroupProcessError
 from process.participant_process import ParticipantProcess
 from process.board_process import BoardProcess
-from data import Board, Participant, Group
+from data import Group
 
 
 class GroupProcess(object):

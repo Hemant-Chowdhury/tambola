@@ -291,8 +291,8 @@ class BoardFrame(Frame):
         self.grid_rowconfigure(0, weight=1)
         Label(self, text='Board', bg=COLOR_BLUE, width=77).grid(sticky='we', columnspan=10)
         self.numbers_label: List[List[Label]] = list()
-        self._init_numbers()
-        self._pack_numbers()
+        self._init_board_numbers()
+
         Label(self, text='', bg=COLOR_BLUE).grid(sticky='we', columnspan=10)
         self.next_number_button = Button(self,
                                          text='Next Number',
@@ -309,13 +309,14 @@ class BoardFrame(Frame):
         self.start_new_game_button.grid(row=12, column=0, columnspan=5, sticky='nws')
         self.next_number_button.grid(row=12, column=5, columnspan=3, sticky='nes')
         self.next_number_label.grid(row=12, column=8, sticky='news', columnspan=2)
-        # self.sequence_label
-        self.board_process: BoardProcess = active_group_process.board_process
-        self.init_board_state()
-        if self.board_process.board.pointer == 0:
-            self.start_new_game_button.config(state=DISABLED)
 
-    def _init_numbers(self):
+        self.board_process: BoardProcess = active_group_process.board_process
+        self._init_board_state()
+
+        self.sequence_labels: List[Label] = list()
+        self._init_sequence_numbers()
+
+    def _init_board_numbers(self):
         for row in range(1, 10):
             row_list = list()
             for col in range(1, 11):
@@ -326,15 +327,19 @@ class BoardFrame(Frame):
                                       height=3,
                                       width=3))
             self.numbers_label.append(row_list)
-
-    def _pack_numbers(self):
         for row, row_list in enumerate(self.numbers_label):
             for col, number_label in enumerate(row_list):
                 number_label.grid(row=row + 1, column=col, sticky='news')
 
-    def init_board_state(self):
+    def _init_board_state(self):
         for number in self.board_process.get_checked_numbers():
             self.mark_number_in_board(number)
+        if self.board_process.board.pointer == 0:
+            self.start_new_game_button.config(state=DISABLED)
+
+    def _init_sequence_numbers(self):
+        self.sequence_labels = [Label(self, text='', fg='white', font='Helvetica 16 bold') for _ in range(6)]
+        list_hex_color = ['#71c804', '#ff7a04', '#7242bc', '#ae4a30', '#548bba', '#f62774']
 
     def mark_number_in_board(self, number: int):
         number -= 1
@@ -348,11 +353,11 @@ class BoardFrame(Frame):
         except BoardProcessError as e:
             messagebox.showerror("No next number", e)
             return
-        InterFrameCalls.check_new_number_present_in_tickets(number)
         self.next_number_label.config(text=str(number))
         self.mark_number_in_board(number)
         if self.board_process.board.pointer == 1:
             self.enable_start_new_game_button()
+        InterFrameCalls.check_new_number_present_in_tickets(number)
 
     def new_game_method(self):
         response = messagebox.askquestion('New Game', 'Are you sure you want to start a new game? '
