@@ -132,5 +132,5 @@ main_view = GroupsView(ROOT)
 ROOT.mainloop()
 
 
-# TODO make sequence list in Board Frame
 # TODO share image functionality
+# TODO Add logger throughout the code
