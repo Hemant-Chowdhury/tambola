@@ -288,6 +288,7 @@ class BoardFrame(Frame):
 
     def __init__(self, master):
         super(BoardFrame, self).__init__(master, bg=COLOR_GREEN)
+        self.board_process: BoardProcess = active_group_process.board_process
         self.grid_rowconfigure(0, weight=1)
         Label(self, text='Board', bg=COLOR_BLUE, width=77).grid(sticky='we', columnspan=10)
         self.numbers_label: List[List[Label]] = list()
@@ -300,21 +301,22 @@ class BoardFrame(Frame):
         self.start_new_game_button = Button(self,
                                             text='Start New Game',
                                             command=self.new_game_method)
+        self.number_of_numbers_called_label = Label(self,
+                                                    text=f'Total: {self.board_process.board.pointer}',
+                                                    bg=COLOR_GREEN)
         self.next_number_label = Label(self,
                                        text='',
                                        borderwidth=2,
                                        relief="groove",
                                        font='Helvetica 24 bold',
                                        bg='red', fg='white')
-        self.start_new_game_button.grid(row=12, column=0, columnspan=5, sticky='nws')
-        self.next_number_button.grid(row=12, column=5, columnspan=3, sticky='nes')
+        self.start_new_game_button.grid(row=12, column=0, columnspan=3, sticky='nws')
+        self.number_of_numbers_called_label.grid(row=12, column=3, columnspan=3)
+        self.next_number_button.grid(row=12, column=6, columnspan=2, sticky='nes')
         self.next_number_label.grid(row=12, column=8, sticky='news', columnspan=2)
 
-        self.board_process: BoardProcess = active_group_process.board_process
         self._init_board_state()
-
-        self.sequence_labels: List[Label] = list()
-        self._init_sequence_numbers()
+        self.sequence_label_manager = self.SequenceLabelManager(self, row=13)
 
     def _init_board_numbers(self):
         for row in range(1, 10):
@@ -339,7 +341,6 @@ class BoardFrame(Frame):
 
     def _init_sequence_numbers(self):
         self.sequence_labels = [Label(self, text='', fg='white', font='Helvetica 16 bold') for _ in range(6)]
-        list_hex_color = ['#71c804', '#ff7a04', '#7242bc', '#ae4a30', '#548bba', '#f62774']
 
     def mark_number_in_board(self, number: int):
         number -= 1
@@ -358,6 +359,8 @@ class BoardFrame(Frame):
         if self.board_process.board.pointer == 1:
             self.enable_start_new_game_button()
         InterFrameCalls.check_new_number_present_in_tickets(number)
+        self.sequence_label_manager.insert_new_number_in_sequence()
+        self.number_of_numbers_called_label.config(text=f'Total: {self.board_process.board.pointer}')
 
     def new_game_method(self):
         response = messagebox.askquestion('New Game', 'Are you sure you want to start a new game? '
@@ -369,6 +372,8 @@ class BoardFrame(Frame):
             self.remove_all_marked_numbers()
             InterFrameCalls.refresh_ticket_frame()
             self.start_new_game_button.config(state=DISABLED)
+            self.sequence_label_manager.refresh_sequence()
+            self.number_of_numbers_called_label.config(text=f'Start Game -> ')
         except Exception:
             # TODO create a specific exception for new board
             messagebox.showerror('Error', 'Unable to start new game, try again')
@@ -380,3 +385,57 @@ class BoardFrame(Frame):
 
     def enable_start_new_game_button(self):
         self.start_new_game_button.config(state=NORMAL)
+
+    class SequenceLabelManager:
+        """docstring for sequence label manager"""
+
+        def __init__(self, master, row):
+            self.master: BoardFrame = master
+            self.window = 6
+            self.starting_pointer = max(0, self.master.board_process.board.pointer - self.window)
+            self.list_hex_color = ['#6640e6', '#7a45db', '#8f4ad1', '#a34fc7', '#b854bd', '#cc59b2']
+            self.sequence_labels: List[Label] = [Label(master, text='', bg=COLOR_GREEN, fg='white') for _ in range(6)]
+            for column, label in enumerate(self.sequence_labels, 2):
+                label.grid(row=row, column=column)
+            self.prev_label_button = Button(master, text='<<', command=self.prev_button)
+            self.next_label_button = Button(master, text='>>', command=self.next_button)
+            self.prev_label_button.grid(row=row, column=1, sticky='news')
+            self.next_label_button.grid(row=row, column=8, sticky='news')
+            self.set_new_view()
+
+        def set_new_view(self):
+            checked_numbers = self.master.board_process.get_checked_numbers()
+            for index, label in enumerate(self.sequence_labels, self.starting_pointer):
+                if index < self.master.board_process.board.pointer - 1:
+                    label.config(bg=self.list_hex_color[index % self.window])
+                    label.config(text=f'--{checked_numbers[index]}->', bd=2, relief='flat')
+                elif index == self.master.board_process.board.pointer - 1:
+                    label.config(bg=self.list_hex_color[index % self.window])
+                    label.config(text=f'--{checked_numbers[index]}->', bd=2, relief='solid')
+                else:
+                    label.config(bg=COLOR_GREEN, text='', bd=0)
+            if self.starting_pointer == 0:
+                self.prev_label_button.config(state=DISABLED)
+            else:
+                self.prev_label_button.config(state=NORMAL)
+            if self.starting_pointer + self.window < self.master.board_process.board.pointer:
+                self.next_label_button.config(state=NORMAL)
+            else:
+                self.next_label_button.config(state=DISABLED)
+
+        def prev_button(self):
+            self.starting_pointer = max(0, self.starting_pointer-1)
+            self.set_new_view()
+
+        def next_button(self):
+            self.starting_pointer = min(max(0, self.master.board_process.board.pointer - self.window),
+                                        self.starting_pointer + 1)
+            self.set_new_view()
+
+        def insert_new_number_in_sequence(self):
+            self.starting_pointer = max(0, self.master.board_process.board.pointer - self.window)
+            self.set_new_view()
+
+        def refresh_sequence(self):
+            self.starting_pointer = 0
+            self.set_new_view()
