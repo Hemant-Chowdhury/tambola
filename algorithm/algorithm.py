@@ -12,7 +12,7 @@ class TicketGenerator(object):
         self.numbers: List[List[int]] = [list() for row in range(self.rows)]
         self._mark_random_positions()
         self._fill_random_numbers()
-        self.print_numbers()
+        # self.print_numbers()
 
     def _mark_random_positions(self):
         sample_space = set(range(0, self.columns))
