@@ -1,6 +1,8 @@
+import tempfile
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 from typing import List, Optional
+from image_builder import ticket_image_builder, board_image_builder
 
 from process import GroupProcess, ParticipantProcess, TicketProcess, ParticipantProcessError, BoardProcess, \
     BoardProcessError
@@ -108,14 +110,16 @@ class ParticipantLabelFrame(LabelFrame):
             text=participant_process.participant.participant_name,
             justify='left',
             command=lambda: InterFrameCalls.refresh_ticket_frame(self.participant_process))
-        self.participant_label.grid(row=0, columnspan=5)
+        self.participant_label.grid(row=0, column=0, columnspan=5)
         self.remove_button = Button(self, text='Remove', command=self.remove)
         self.remove_button.grid(row=0, column=5, sticky='e', columnspan=3)
         self.number_of_tickets_label = Label(self,
                                              text=f'Tickets: {len(self.participant_process.ticket_process_list)}')
-        self.number_of_tickets_label.grid(row=1, column=0, columnspan=5, sticky='w')
+        self.number_of_tickets_label.grid(row=1, column=0, columnspan=3, sticky='w')
         self.add_ticket_button = Button(self, text='+', command=self.add_ticket)
-        self.add_ticket_button.grid(row=1, column=5, sticky='w')
+        self.add_ticket_button.grid(row=1, column=3, columnspan=1, sticky='w')
+        self.share_tickets_button = Button(self, text='Share tickets', command=self.share_ticket)
+        self.share_tickets_button.grid(row=1, column=4, columnspan=4, sticky='news')
 
     def remove(self):
         try:
@@ -136,6 +140,20 @@ class ParticipantLabelFrame(LabelFrame):
         new_ticket_process = self.participant_process.add_ticket()
         self.number_of_tickets_label.config(text=f'Tickets: {len(self.participant_process.ticket_process_list)}')
         InterFrameCalls.add_ticket_in_ticket_frame_if_participant_in_focus(new_ticket_process)
+
+    def share_ticket(self):
+        if len(self.participant_process.ticket_process_list) == 0:
+            messagebox.showinfo("Share Ticket", "Please add at least one ticket to share!")
+            return
+        with tempfile.TemporaryDirectory(prefix="ticket_") as temp_dir_name:
+            name = self.participant_process.participant.participant_name + "_tickets.png"
+            import os
+            file_path = os.path.join(temp_dir_name, name)
+            ticket_image_builder.TicketsImageBuilder(self.participant_process.ticket_process_list).save(file_path)
+            filedialog.askdirectory(
+                initialdir=f'{temp_dir_name}',
+                title='Share Ticket',
+                message=f'A temporary image for ticket is created\nDrag {name} file, save and share')
 
 
 class AllParticipantsFrame(Frame):
@@ -301,9 +319,9 @@ class BoardFrame(Frame):
         self.start_new_game_button = Button(self,
                                             text='Start New Game',
                                             command=self.new_game_method)
-        self.number_of_numbers_called_label = Label(self,
-                                                    text=f'Total: {self.board_process.board.pointer}',
-                                                    bg=COLOR_GREEN)
+        self.share_board_button = Button(self,
+                                         text='Share board',
+                                         command=self.share_board)
         self.next_number_label = Label(self,
                                        text='',
                                        borderwidth=2,
@@ -311,12 +329,12 @@ class BoardFrame(Frame):
                                        font='Helvetica 24 bold',
                                        bg='red', fg='white')
         self.start_new_game_button.grid(row=12, column=0, columnspan=3, sticky='nws')
-        self.number_of_numbers_called_label.grid(row=12, column=3, columnspan=3)
+        self.share_board_button.grid(row=12, column=2, columnspan=2)
         self.next_number_button.grid(row=12, column=6, columnspan=2, sticky='nes')
         self.next_number_label.grid(row=12, column=8, sticky='news', columnspan=2)
 
         self._init_board_state()
-        self.sequence_label_manager = self.SequenceLabelManager(self, row=13)
+        self.sequence_label_manager = self.BoardDataViewer(self, row=13)
 
     def _init_board_numbers(self):
         for row in range(1, 10):
@@ -360,7 +378,6 @@ class BoardFrame(Frame):
             self.enable_start_new_game_button()
         InterFrameCalls.check_new_number_present_in_tickets(number)
         self.sequence_label_manager.insert_new_number_in_sequence()
-        self.number_of_numbers_called_label.config(text=f'Total: {self.board_process.board.pointer}')
 
     def new_game_method(self):
         response = messagebox.askquestion('New Game', 'Are you sure you want to start a new game? '
@@ -373,7 +390,6 @@ class BoardFrame(Frame):
             InterFrameCalls.refresh_ticket_frame()
             self.start_new_game_button.config(state=DISABLED)
             self.sequence_label_manager.refresh_sequence()
-            self.number_of_numbers_called_label.config(text=f'Start Game -> ')
         except Exception:
             # TODO create a specific exception for new board
             messagebox.showerror('Error', 'Unable to start new game, try again')
@@ -386,32 +402,47 @@ class BoardFrame(Frame):
     def enable_start_new_game_button(self):
         self.start_new_game_button.config(state=NORMAL)
 
-    class SequenceLabelManager:
-        """docstring for sequence label manager"""
+    def share_board(self):
+        import os
+        with tempfile.TemporaryDirectory() as temp_dir_name:
+            name = "board.png"
+            file_path = os.path.join(temp_dir_name, name)
+            board_image_builder.BoardImageBuilder(self.board_process).save_image(file_path)
+            filedialog.askdirectory(
+                initialdir=f'{temp_dir_name}',
+                title='Share Board',
+                message=f'A temporary image for Board is created\nDrag {name} file, save and share')
+
+    class BoardDataViewer:
+        """docstring for Board data viewer"""
 
         def __init__(self, master, row):
             self.master: BoardFrame = master
             self.window = 6
             self.starting_pointer = max(0, self.master.board_process.board.pointer - self.window)
-            self.list_hex_color = ['#6640e6', '#7a45db', '#8f4ad1', '#a34fc7', '#b854bd', '#cc59b2']
-            self.sequence_labels: List[Label] = [Label(master, text='', bg=COLOR_GREEN, fg='white') for _ in range(6)]
-            for column, label in enumerate(self.sequence_labels, 2):
+            self.sequence_labels: List[Label] = [Label(master, text='', bg=COLOR_GREEN) for _ in range(6)]
+            for column, label in enumerate(self.sequence_labels, 1):
                 label.grid(row=row, column=column)
             self.prev_label_button = Button(master, text='<<', command=self.prev_button)
             self.next_label_button = Button(master, text='>>', command=self.next_button)
-            self.prev_label_button.grid(row=row, column=1, sticky='news')
-            self.next_label_button.grid(row=row, column=8, sticky='news')
+            self.prev_label_button.grid(row=row, column=0, sticky='news')
+            self.next_label_button.grid(row=row, column=7, sticky='news')
+            self.number_of_numbers_called_label = Label(master,
+                                                        text=f'',
+                                                        bg=COLOR_GREEN)
+            self.number_of_numbers_called_label.grid(row=row, column=8, columnspan=2)
+            self.show_total_numbers_called()
             self.set_new_view()
 
         def set_new_view(self):
             checked_numbers = self.master.board_process.get_checked_numbers()
             for index, label in enumerate(self.sequence_labels, self.starting_pointer):
                 if index < self.master.board_process.board.pointer - 1:
-                    label.config(bg=self.list_hex_color[index % self.window])
-                    label.config(text=f'--{checked_numbers[index]}->', bd=2, relief='flat')
+                    label.config(fg=f"#{99-index:02d}00{index:02d}")
+                    label.config(text=f'{checked_numbers[index]}->', bd=2, relief='flat')
                 elif index == self.master.board_process.board.pointer - 1:
-                    label.config(bg=self.list_hex_color[index % self.window])
-                    label.config(text=f'--{checked_numbers[index]}->', bd=2, relief='solid')
+                    label.config(fg=f'#{99-index:02d}00{index:02d}')
+                    label.config(text=f'{checked_numbers[index]}->', bd=2, relief='solid')
                 else:
                     label.config(bg=COLOR_GREEN, text='', bd=0)
             if self.starting_pointer == 0:
@@ -435,7 +466,15 @@ class BoardFrame(Frame):
         def insert_new_number_in_sequence(self):
             self.starting_pointer = max(0, self.master.board_process.board.pointer - self.window)
             self.set_new_view()
+            self.show_total_numbers_called()
 
         def refresh_sequence(self):
             self.starting_pointer = 0
             self.set_new_view()
+            self.show_total_numbers_called()
+
+        def show_total_numbers_called(self):
+            if self.master.board_process.board.pointer != 0:
+                self.number_of_numbers_called_label.config(text=f'Total: {self.master.board_process.board.pointer}')
+            else:
+                self.number_of_numbers_called_label.config(text=f'Lets Play!')

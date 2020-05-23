@@ -4,6 +4,8 @@ from typing import List
 from process import game_process, GroupProcess, ProcessError
 from gui.group_gui import GroupWindow
 
+import os
+
 ROW = 500
 COL = 500
 
@@ -124,13 +126,12 @@ class AllGroupsFrame(Frame):
 
 ROOT = Tk()
 ROOT.title("Tambola")
-photo = PhotoImage('resources/icon.ico')
+photo = PhotoImage(os.path.join("tumbola", "resources", "icon.ico"))
 ROOT.iconphoto(False, photo)
 ROOT.geometry(f'{ROW}x{COL}')
 # master.resizable(False, False)
 main_view = GroupsView(ROOT)
 ROOT.mainloop()
-
 
 # TODO share image functionality
 # TODO Add logger throughout the code
