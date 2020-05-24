@@ -1,4 +1,4 @@
-from tkinter import Tk, messagebox, Label, Canvas, Scrollbar, Frame, LabelFrame, Button, Entry, PhotoImage
+from tkinter import Tk, messagebox, Label, Canvas, Scrollbar, Frame, LabelFrame, Button, Entry
 from typing import List
 
 from process import game_process, GroupProcess, ProcessError
@@ -132,6 +132,8 @@ class AllGroupsFrame(Frame):
 ROOT = Tk()
 ROOT.title("Tambola")
 ROOT.iconbitmap(os.path.abspath(os.path.join('tambola', 'resources', 'icon.ico')))
+
+ROOT.option_add("*Font", "courier 14")
 ROOT.geometry(f'{ROW}x{COL}')
 main_view = GroupsView(ROOT)
 ROOT.mainloop()

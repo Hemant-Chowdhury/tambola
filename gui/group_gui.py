@@ -115,7 +115,7 @@ class ParticipantLabelFrame(LabelFrame):
             text=participant_process.participant.participant_name,
             justify='left',
             command=lambda: InterFrameCalls.refresh_ticket_frame(self.participant_process))
-        self.participant_label.grid(row=0, column=0, columnspan=5)
+        self.participant_label.grid(row=0, column=0, columnspan=5, padx=10)
         self.remove_button = Button(self, text='Remove', command=self.remove)
         self.remove_button.grid(row=0, column=5, sticky='e', columnspan=3)
         self.number_of_tickets_label = Label(self,
@@ -423,7 +423,8 @@ class BoardFrame(Frame):
             self.master: BoardFrame = master
             self.window = 6
             self.starting_pointer = max(0, self.master.board_process.board.pointer - self.window)
-            self.sequence_labels: List[Label] = [Label(master, text='', bg=COLOR_GREEN) for _ in range(6)]
+            self.sequence_labels: List[Label] = [Label(master, text='', bg=COLOR_GREEN, font='Helvetica 14 bold')
+                                                 for _ in range(6)]
             for column, label in enumerate(self.sequence_labels, 1):
                 label.grid(row=row, column=column)
             self.prev_label_button = Button(master,
@@ -438,7 +439,8 @@ class BoardFrame(Frame):
             self.next_label_button.grid(row=row, column=7, sticky='news')
             self.number_of_numbers_called_label = Label(master,
                                                         text=f'',
-                                                        bg=COLOR_GREEN)
+                                                        bg=COLOR_GREEN,
+                                                        font='Helvetica 16 bold')
             self.number_of_numbers_called_label.grid(row=row, column=8, columnspan=2)
             self.show_total_numbers_called()
             self.set_new_view()
