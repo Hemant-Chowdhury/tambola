@@ -336,7 +336,7 @@ class BoardFrame(Frame):
                                        font='Helvetica 24 bold',
                                        bg='red', fg='white')
         self.start_new_game_button.grid(row=12, column=0, columnspan=3, sticky='nws')
-        self.share_board_button.grid(row=12, column=2, columnspan=2)
+        self.share_board_button.grid(row=12, column=2, columnspan=2, sticky='news')
         self.next_number_button.grid(row=12, column=6, columnspan=2, sticky='nes')
         self.next_number_label.grid(row=12, column=8, sticky='news', columnspan=2)
 
