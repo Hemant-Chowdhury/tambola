@@ -116,12 +116,12 @@ class ParticipantLabelFrame(LabelFrame):
             justify='left',
             command=lambda: InterFrameCalls.refresh_ticket_frame(self.participant_process))
         self.participant_label.grid(row=0, column=0, columnspan=5, padx=10)
-        self.remove_button = Button(self, text='Remove', command=self.remove)
+        self.remove_button = Button(self, text='Remove', command=self.remove, bg='red', fg='white')
         self.remove_button.grid(row=0, column=5, sticky='e', columnspan=3)
         self.number_of_tickets_label = Label(self,
                                              text=f'Tickets: {len(self.participant_process.ticket_process_list)}')
         self.number_of_tickets_label.grid(row=1, column=0, columnspan=3, sticky='w')
-        self.add_ticket_button = Button(self, text='+', command=self.add_ticket)
+        self.add_ticket_button = Button(self, text='+1', command=self.add_ticket)
         self.add_ticket_button.grid(row=1, column=3, columnspan=1, sticky='w')
         self.share_tickets_button = Button(self, text='Share tickets', command=self.share_ticket)
         self.share_tickets_button.grid(row=1, column=4, columnspan=4, sticky='news')
@@ -324,7 +324,8 @@ class BoardFrame(Frame):
         self.start_new_game_button = Button(self,
                                             text='Start New Game',
                                             command=self.new_game_method,
-                                            highlightbackground=COLOR_GREEN)
+                                            highlightbackground=COLOR_GREEN,
+                                            bg=COLOR_BLUE)
         self.share_board_button = Button(self,
                                          text='Share board',
                                          command=self.share_board,

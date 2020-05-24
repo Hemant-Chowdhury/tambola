@@ -87,7 +87,7 @@ class GroupLabelFrame(LabelFrame):
         self.delete_button = Button(self, text="Delete", command=self.delete_group)
         self.group_name_label.pack(side='left')
         self.delete_button.pack(side='right')
-        self.view_button.pack(side='right')
+        self.view_button.pack(side='right', padx=5)
 
     def delete_group(self):
         response = messagebox.askquestion("Delete group",
