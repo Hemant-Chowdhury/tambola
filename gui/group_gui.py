@@ -156,7 +156,10 @@ class ParticipantLabelFrame(LabelFrame):
             defaultextension='.png',
             filetypes=[('PNG file', '*.png')]
             )
-        ticket_image_builder.TicketsImageBuilder(self.participant_process.ticket_process_list).save(file.name)
+        try:
+            ticket_image_builder.TicketsImageBuilder(self.participant_process.ticket_process_list).save(file.name)
+        except AttributeError:
+            pass
 
 
 class AllParticipantsFrame(Frame):
@@ -414,7 +417,10 @@ class BoardFrame(Frame):
             title='Share Board',
             defaultextension='.png',
             filetypes=[('PNG files', '*.png')])
-        board_image_builder.BoardImageBuilder(self.board_process).save_image(file.name)
+        try:
+            board_image_builder.BoardImageBuilder(self.board_process).save_image(file.name)
+        except AttributeError:
+            pass
 
     class BoardDataViewer:
         """docstring for Board data viewer"""
