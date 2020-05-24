@@ -115,16 +115,16 @@ class ParticipantLabelFrame(LabelFrame):
             text=participant_process.participant.participant_name,
             justify='left',
             command=lambda: InterFrameCalls.refresh_ticket_frame(self.participant_process))
-        self.participant_label.grid(row=0, column=0, columnspan=5, padx=10)
+        self.participant_label.grid(row=0, column=0, columnspan=5)
         self.remove_button = Button(self, text='Remove', command=self.remove, bg='red', fg='white')
-        self.remove_button.grid(row=0, column=5, sticky='e', columnspan=3)
+        self.remove_button.grid(row=0, column=5, sticky='e', columnspan=3, padx=10)
         self.number_of_tickets_label = Label(self,
                                              text=f'Tickets: {len(self.participant_process.ticket_process_list)}')
-        self.number_of_tickets_label.grid(row=1, column=0, columnspan=3, sticky='w')
+        self.number_of_tickets_label.grid(row=1, column=0, columnspan=3, sticky='w', pady=1)
         self.add_ticket_button = Button(self, text='+1', command=self.add_ticket)
-        self.add_ticket_button.grid(row=1, column=3, columnspan=1, sticky='w')
+        self.add_ticket_button.grid(row=1, column=3, columnspan=1, sticky='w', pady=1)
         self.share_tickets_button = Button(self, text='Share tickets', command=self.share_ticket)
-        self.share_tickets_button.grid(row=1, column=4, columnspan=4, sticky='news')
+        self.share_tickets_button.grid(row=1, column=4, columnspan=4, sticky='news', pady=1)
 
     def remove(self):
         try:
@@ -199,7 +199,7 @@ class AllParticipantsFrame(Frame):
         new_participant_view = ParticipantLabelFrame(self, participant_process=participant_process)
         new_participant_view.bind("<Button-1>", lambda _: InterFrameCalls.refresh_ticket_frame(participant_process))
         self.participant_view_objects.append(new_participant_view)
-        new_participant_view.pack(fill='x', padx=2)
+        new_participant_view.pack(fill='x', pady=1)
 
     def remove_participant_from_frame(self, participant_view_object):
         participant_view_object.pack_forget()
@@ -316,7 +316,7 @@ class BoardFrame(Frame):
         self.numbers_label: List[List[Label]] = list()
         self._init_board_numbers()
 
-        Label(self, text='', bg=COLOR_BLUE).grid(sticky='we', columnspan=10)
+        Label(self, text='', bg=COLOR_GREEN).grid(sticky='we', columnspan=10)
         self.next_number_button = Button(self,
                                          text='Next Number',
                                          command=self.get_next_number,
@@ -324,8 +324,7 @@ class BoardFrame(Frame):
         self.start_new_game_button = Button(self,
                                             text='Start New Game',
                                             command=self.new_game_method,
-                                            highlightbackground=COLOR_GREEN,
-                                            bg=COLOR_BLUE)
+                                            highlightbackground=COLOR_GREEN)
         self.share_board_button = Button(self,
                                          text='Share board',
                                          command=self.share_board,
@@ -336,13 +335,13 @@ class BoardFrame(Frame):
                                        relief="groove",
                                        font='Helvetica 24 bold',
                                        bg='red', fg='white')
-        self.start_new_game_button.grid(row=12, column=0, columnspan=3, sticky='nws')
-        self.share_board_button.grid(row=12, column=2, columnspan=2, sticky='news')
-        self.next_number_button.grid(row=12, column=6, columnspan=2, sticky='nes')
+        self.start_new_game_button.grid(row=12, column=0, columnspan=2, sticky='news')
+        self.share_board_button.grid(row=12, column=2, columnspan=2, sticky='news', padx=5)
+        self.next_number_button.grid(row=12, column=6, columnspan=2, sticky='news', padx=5)
         self.next_number_label.grid(row=12, column=8, sticky='news', columnspan=2)
 
         self._init_board_state()
-        self.sequence_label_manager = self.BoardDataViewer(self, row=13)
+        self.sequence_label_manager = self.BoardDataViewer(self, row=14)
 
     def _init_board_numbers(self):
         for row in range(1, 10):
