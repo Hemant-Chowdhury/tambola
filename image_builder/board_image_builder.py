@@ -43,4 +43,4 @@ class BoardImageBuilder(object):
         self.draw.text(xy=(BOX * 4, BOX * 9 + 10), text=f'Total: {self.board_process.board.pointer}', fill=COLOR_BLACK, font=FONT_SMALL)
 
     def save_image(self, file_path: str):
-        self.board_img.save(file_path)
+        self.board_img.save(file_path, 'PNG')

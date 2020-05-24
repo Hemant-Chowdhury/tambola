@@ -1,4 +1,5 @@
 import tempfile
+import os
 from tkinter import *
 from tkinter import messagebox, filedialog
 from typing import List, Optional
@@ -24,6 +25,8 @@ class GroupWindow(Toplevel):
 
     def __init__(self, master, group_process_obj: GroupProcess):
         super(GroupWindow, self).__init__(master)
+        self.title(group_process_obj.group.group_name)
+        self.iconbitmap(os.path.abspath(os.path.join('tambola', 'resources', 'icon.ico')))
         global active_group_process
         active_group_process = group_process_obj
         global main_group_window
@@ -145,15 +148,14 @@ class ParticipantLabelFrame(LabelFrame):
         if len(self.participant_process.ticket_process_list) == 0:
             messagebox.showinfo("Share Ticket", "Please add at least one ticket to share!")
             return
-        with tempfile.TemporaryDirectory(prefix="ticket_") as temp_dir_name:
-            name = self.participant_process.participant.participant_name + "_tickets.png"
-            import os
-            file_path = os.path.join(temp_dir_name, name)
-            ticket_image_builder.TicketsImageBuilder(self.participant_process.ticket_process_list).save(file_path)
-            filedialog.askdirectory(
-                initialdir=f'{temp_dir_name}',
-                title='Share Ticket',
-                message=f'A temporary image for ticket is created\nDrag {name} file, save and share')
+        name = self.participant_process.participant.participant_name + "_tickets"
+        file = filedialog.asksaveasfile(
+            initialfile=name,
+            title='Save Ticket',
+            defaultextension='.png',
+            filetypes=[('PNG file', '*.png')]
+            )
+        ticket_image_builder.TicketsImageBuilder(self.participant_process.ticket_process_list).save(file.name)
 
 
 class AllParticipantsFrame(Frame):
@@ -343,8 +345,7 @@ class BoardFrame(Frame):
                 row_list.append(Label(self,
                                       text=str((row - 1) * 10 + col),
                                       borderwidth=2, relief="groove",
-                                      font='Helvetica 20 bold',
-                                      height=3,
+                                      font='Helvetica 24 bold',
                                       width=3))
             self.numbers_label.append(row_list)
         for row, row_list in enumerate(self.numbers_label):
@@ -403,15 +404,13 @@ class BoardFrame(Frame):
         self.start_new_game_button.config(state=NORMAL)
 
     def share_board(self):
-        import os
-        with tempfile.TemporaryDirectory() as temp_dir_name:
-            name = "board.png"
-            file_path = os.path.join(temp_dir_name, name)
-            board_image_builder.BoardImageBuilder(self.board_process).save_image(file_path)
-            filedialog.askdirectory(
-                initialdir=f'{temp_dir_name}',
-                title='Share Board',
-                message=f'A temporary image for Board is created\nDrag {name} file, save and share')
+        name = "board"
+        file = filedialog.asksaveasfile(
+            initialfile=f'{name}_snapshot_till_{self.board_process.board.pointer}_numbers_called',
+            title='Share Board',
+            defaultextension='.png',
+            filetypes=[('PNG files', '*.png')])
+        board_image_builder.BoardImageBuilder(self.board_process).save_image(file.name)
 
     class BoardDataViewer:
         """docstring for Board data viewer"""

@@ -126,8 +126,7 @@ class AllGroupsFrame(Frame):
 
 ROOT = Tk()
 ROOT.title("Tambola")
-photo = PhotoImage(os.path.join("tumbola", "resources", "icon.ico"))
-ROOT.iconphoto(False, photo)
+ROOT.iconbitmap(os.path.abspath(os.path.join('tambola', 'resources', 'icon.ico')))
 ROOT.geometry(f'{ROW}x{COL}')
 # master.resizable(False, False)
 main_view = GroupsView(ROOT)

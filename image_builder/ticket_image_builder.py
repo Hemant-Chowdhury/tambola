@@ -73,5 +73,5 @@ class TicketsImageBuilder:
             y_offset += img.size[1]
 
     def save(self, file_path):
-        self.full_ticket_image.save(f"{file_path}")
+        self.full_ticket_image.save(file_path, 'PNG')
 
