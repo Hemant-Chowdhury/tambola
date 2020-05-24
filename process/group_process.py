@@ -54,8 +54,12 @@ class GroupProcess(object):
         return participant_process
 
     def remove_participant(self, participant_process_obj: ParticipantProcess):
-        database.participants_table.delete(participant_process_obj.participant)
-        self.participant_process_list.remove(participant_process_obj)
+        try:
+            database.participants_table.delete(participant_process_obj.participant)
+            self.participant_process_list.remove(participant_process_obj)
+        except DatabaseOperationError:
+            raise GroupProcessError(f'Unable to remove {participant_process_obj.participant.participant_name},'
+                                    f' please try again')
 
     def refresh_group_variables(self):
         try:
@@ -64,4 +68,4 @@ class GroupProcess(object):
             for participant in self.participant_process_list:
                 participant.clear_tickets()
         except DatabaseOperationError:
-            raise GroupProcessError('Unable to start a new game, try again!')
+            raise GroupProcessError('Unable to start a new game, please try again!')

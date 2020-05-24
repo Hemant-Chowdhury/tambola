@@ -6,8 +6,7 @@ from typing import List, Optional
 from image_builder import ticket_image_builder, board_image_builder
 
 from process import GroupProcess, ParticipantProcess, TicketProcess, ParticipantProcessError, BoardProcess, \
-    BoardProcessError
-
+    BoardProcessError, GroupProcessError
 
 PARTICIPANTS_FRAME_WIDTH = 300
 TICKETS_FRAME_WIDTH = 350
@@ -138,9 +137,8 @@ class ParticipantLabelFrame(LabelFrame):
                 active_group_process.remove_participant(self.participant_process)
                 InterFrameCalls.refresh_ticket_frame_if_participant_in_focus(self.participant_process)
                 self.master.remove_participant_from_frame(self)
-        except Exception:
-            # TODO need to create a specific exception
-            messagebox.showerror('Error', 'Unable to remove participant, please try again')
+        except GroupProcessError as e:
+            messagebox.showerror('Error', e)
 
     def add_ticket(self):
         new_ticket_process = self.participant_process.add_ticket()
@@ -394,9 +392,8 @@ class BoardFrame(Frame):
             InterFrameCalls.refresh_ticket_frame()
             self.start_new_game_button.config(state=DISABLED)
             self.sequence_label_manager.refresh_sequence()
-        except Exception:
-            # TODO create a specific exception for new board
-            messagebox.showerror('Error', 'Unable to start new game, try again')
+        except GroupProcessError as e:
+            messagebox.showerror('Error', e)
 
     def remove_all_marked_numbers(self):
         for row, row_list in enumerate(self.numbers_label):

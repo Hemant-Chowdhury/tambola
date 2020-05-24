@@ -128,9 +128,7 @@ ROOT = Tk()
 ROOT.title("Tambola")
 ROOT.iconbitmap(os.path.abspath(os.path.join('tambola', 'resources', 'icon.ico')))
 ROOT.geometry(f'{ROW}x{COL}')
-# master.resizable(False, False)
 main_view = GroupsView(ROOT)
 ROOT.mainloop()
 
-# TODO share image functionality
 # TODO Add logger throughout the code
