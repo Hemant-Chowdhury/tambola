@@ -86,6 +86,10 @@ class InterFrameCalls:
         main_group_window.tickets_frame.refresh_tickets(participant_process)
 
     @staticmethod
+    def refresh_participant_frame():
+        main_group_window.participants_frame.refresh_participants()
+
+    @staticmethod
     def refresh_ticket_frame_if_participant_in_focus(participant_process: ParticipantProcess):
         main_group_window.tickets_frame.refresh_ticket_frame_if_participant_in_focus(participant_process)
 
@@ -142,7 +146,7 @@ class ParticipantLabelFrame(LabelFrame):
 
     def add_ticket(self):
         new_ticket_process = self.participant_process.add_ticket()
-        self.number_of_tickets_label.config(text=f'Tickets: {len(self.participant_process.ticket_process_list)}')
+        self.refresh_no_of_tickets_label()
         InterFrameCalls.add_ticket_in_ticket_frame_if_participant_in_focus(new_ticket_process)
 
     def share_ticket(self):
@@ -160,6 +164,9 @@ class ParticipantLabelFrame(LabelFrame):
             ticket_image_builder.TicketsImageBuilder(self.participant_process.ticket_process_list).save(file.name)
         except AttributeError:
             pass
+
+    def refresh_no_of_tickets_label(self):
+        self.number_of_tickets_label.config(text=f'Tickets: {len(self.participant_process.ticket_process_list)}')
 
 
 class AllParticipantsFrame(Frame):
@@ -197,6 +204,10 @@ class AllParticipantsFrame(Frame):
             self.add_participant_in_frame(new_participant_process)
         except ParticipantProcessError as e:
             messagebox.showerror('Error', e)
+
+    def refresh_participants(self):
+        for participant_view in self.participant_view_objects:
+            participant_view.refresh_no_of_tickets_label()
 
     def add_participant_in_frame(self, participant_process: ParticipantProcess):
         new_participant_view = ParticipantLabelFrame(self, participant_process=participant_process)
@@ -397,6 +408,7 @@ class BoardFrame(Frame):
             active_group_process.refresh_group_variables()
             self.remove_all_marked_numbers()
             InterFrameCalls.refresh_ticket_frame()
+            InterFrameCalls.refresh_participant_frame()
             self.start_new_game_button.config(state=DISABLED)
             self.sequence_label_manager.refresh_sequence()
         except GroupProcessError as e:
