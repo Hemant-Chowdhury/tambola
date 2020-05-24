@@ -8,7 +8,7 @@ from image_builder import ticket_image_builder, board_image_builder
 from process import GroupProcess, ParticipantProcess, TicketProcess, ParticipantProcessError, BoardProcess, \
     BoardProcessError
 
-HEIGHT = 800
+
 PARTICIPANTS_FRAME_WIDTH = 300
 TICKETS_FRAME_WIDTH = 350
 BOARDS_FRAME_WIDTH = 650
@@ -16,6 +16,7 @@ BOARDS_FRAME_WIDTH = 650
 COLOR_GREEN = '#ccff99'
 COLOR_BLUE = '#b3e6ff'
 
+start_window_height = 800
 active_group_process: Optional[GroupProcess] = None
 main_group_window = None
 
@@ -27,6 +28,8 @@ class GroupWindow(Toplevel):
         super(GroupWindow, self).__init__(master)
         self.title(group_process_obj.group.group_name)
         self.iconbitmap(os.path.abspath(os.path.join('tambola', 'resources', 'icon.ico')))
+        global start_window_height
+        start_window_height = min(start_window_height, self.winfo_screenheight() - 200)
         global active_group_process
         active_group_process = group_process_obj
         global main_group_window
@@ -35,15 +38,15 @@ class GroupWindow(Toplevel):
         self.participants_frame = self.create_a_scrollable_frame(
             frame_type=AllParticipantsFrame,
             width=PARTICIPANTS_FRAME_WIDTH,
-            height=HEIGHT)
+            height=start_window_height)
         self.tickets_frame = self.create_a_scrollable_frame(
             frame_type=TicketsFrame,
             width=TICKETS_FRAME_WIDTH,
-            height=HEIGHT)
+            height=start_window_height)
         self.boards_frame = self.create_a_scrollable_frame(
             frame_type=BoardFrame,
             width=BOARDS_FRAME_WIDTH,
-            height=HEIGHT)
+            height=start_window_height)
 
     def create_a_scrollable_frame(self, frame_type, height, width):
         scrollable_frame = Frame(self,
