@@ -171,7 +171,8 @@ class AllParticipantsFrame(Frame):
         self.add_participant_entry = Entry(add_participant_labelframe)
         self.add_participant_button = Button(add_participant_labelframe,
                                              text='Add',
-                                             command=self.add_participant_method)
+                                             command=self.add_participant_method,
+                                             highlightbackground=COLOR_GREEN)
         self.add_participant_entry.pack(side='left')
         self.add_participant_button.pack(side='right')
         add_participant_labelframe.pack(pady='5', padx='10')
@@ -318,13 +319,16 @@ class BoardFrame(Frame):
         Label(self, text='', bg=COLOR_BLUE).grid(sticky='we', columnspan=10)
         self.next_number_button = Button(self,
                                          text='Next Number',
-                                         command=self.get_next_number)
+                                         command=self.get_next_number,
+                                         highlightbackground=COLOR_GREEN)
         self.start_new_game_button = Button(self,
                                             text='Start New Game',
-                                            command=self.new_game_method)
+                                            command=self.new_game_method,
+                                            highlightbackground=COLOR_GREEN)
         self.share_board_button = Button(self,
                                          text='Share board',
-                                         command=self.share_board)
+                                         command=self.share_board,
+                                         highlightbackground=COLOR_GREEN)
         self.next_number_label = Label(self,
                                        text='',
                                        borderwidth=2,
@@ -422,8 +426,14 @@ class BoardFrame(Frame):
             self.sequence_labels: List[Label] = [Label(master, text='', bg=COLOR_GREEN) for _ in range(6)]
             for column, label in enumerate(self.sequence_labels, 1):
                 label.grid(row=row, column=column)
-            self.prev_label_button = Button(master, text='<<', command=self.prev_button)
-            self.next_label_button = Button(master, text='>>', command=self.next_button)
+            self.prev_label_button = Button(master,
+                                            text='<<',
+                                            command=self.prev_button,
+                                            highlightbackground=COLOR_GREEN)
+            self.next_label_button = Button(master,
+                                            text='>>',
+                                            command=self.next_button,
+                                            highlightbackground=COLOR_GREEN)
             self.prev_label_button.grid(row=row, column=0, sticky='news')
             self.next_label_button.grid(row=row, column=7, sticky='news')
             self.number_of_numbers_called_label = Label(master,
