@@ -83,13 +83,18 @@ class GroupLabelFrame(LabelFrame):
         self.group_process = group_process
         self.master = master
         self.group_name_label = Label(self, text=self.group_process.group.group_name)
-        self.view_button = Button(self, text="View", command=self.view)
+        self.view_button = Button(self, text=" Open ", command=self.view)
         self.delete_button = Button(self, text="Delete", command=self.delete_group)
         self.group_name_label.pack(side='left')
         self.delete_button.pack(side='right')
         self.view_button.pack(side='right')
 
     def delete_group(self):
+        response = messagebox.askquestion("Delete group",
+                                          f'Are you sure you want to delete {self.group_process.group.group_name}',
+                                          default='no')
+        if response == 'no':
+            return
         game_process.delete_group(self.group_process)
         self.master.delete_group_from_frame(self)
 
