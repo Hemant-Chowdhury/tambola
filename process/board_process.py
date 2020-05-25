@@ -74,5 +74,6 @@ class BoardProcess(object):
 
     def refresh_board(self):
         self.board.sequence_str = BoardProcess._get_new_sequence_str()
+        self._sequence_numbers = self._resolve_sequence_str(self.board.sequence_str)
         self.board.pointer = 0
         database.boards_table.update_board(self.board)

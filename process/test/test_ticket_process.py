@@ -58,6 +58,8 @@ class TestTicketProcess(unittest.TestCase):
         self.assertTrue(test_participant_2 in test_group.participant_process_list)
         self.assertEqual(test_group.board_process.board.pointer, 0)
         self.assertNotEqual(test_board_sequence, test_group.board_process.board.sequence_str)
+        next_num = str(test_group.board_process.get_next_number())
+        self.assertTrue(test_group.board_process.board.sequence_str.startswith(next_num))
         game.delete_group(test_group)
 
 
