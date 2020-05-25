@@ -61,7 +61,7 @@ class BoardProcess(object):
         next_number = self._sequence_numbers[self.board.pointer]
         self.board.pointer += 1
         try:
-            database.boards_table.update_board(self.board)
+            database.boards_table.update_pointer(self.board)
         except DatabaseOperationError:
             self.board.pointer -= 1
             raise BoardProcessError('Unable to get next number, try again!')

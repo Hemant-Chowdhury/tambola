@@ -98,6 +98,24 @@ class Boards(Table):
             pointer=pointer,
             group_name=group_obj.group_name)
 
+    def update_pointer(self, board_obj: Board):
+        with self.connection:
+            try:
+                self.cursor_obj.execute(
+                    """
+                    UPDATE {} 
+                    SET pointer=:pointer
+                    WHERE group_name = :group_name 
+                    """.format(self.table_name),
+                    {
+                        'group_name': board_obj.group_name,
+                        'pointer': board_obj.pointer
+                    })
+            except sqlite3.Error as e:
+                print(e)
+                self.connection.rollback()
+                raise DatabaseOperationError(e)
+
     def update_board(self, board_obj: Board):
         with self.connection:
             try:
