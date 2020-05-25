@@ -407,10 +407,12 @@ class BoardFrame(Frame):
         try:
             active_group_process.refresh_group_variables()
             self.remove_all_marked_numbers()
-            InterFrameCalls.refresh_ticket_frame()
-            InterFrameCalls.refresh_participant_frame()
+            self.next_number_label.config(text='')
             self.start_new_game_button.config(state=DISABLED)
             self.sequence_label_manager.refresh_sequence()
+            InterFrameCalls.refresh_ticket_frame()
+            InterFrameCalls.refresh_participant_frame()
+
         except GroupProcessError as e:
             messagebox.showerror('Error', e)
 
