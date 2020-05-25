@@ -22,7 +22,7 @@ class TestTicketProcess(unittest.TestCase):
         print(ticket_2.numbers)
         for i in range(BOARD_SIZE):
             print(i + 1, ':', test_group.board_process.get_next_number())
-            self.assertEqual(test_group.board_process.pointer, i + 1)
+            self.assertEqual(test_group.board_process.board.pointer, i + 1)
         with self.assertRaises(BoardProcessError) as context:
             test_group.board_process.get_next_number()
         self.assertEqual(str(context.exception), 'All the numbers checked')
@@ -50,13 +50,13 @@ class TestTicketProcess(unittest.TestCase):
         test_board_sequence = test_group.board_process.board.sequence_str
         for i in range(10):
             test_group.board_process.get_next_number()
-            self.assertEqual(test_group.board_process.pointer, i + 1)
+            self.assertEqual(test_group.board_process.board.pointer, i + 1)
         test_group.refresh_group_variables()
         self.assertFalse(ticket_1 in test_participant_1.ticket_process_list)
         self.assertFalse(ticket_2 in test_participant_2.ticket_process_list)
         self.assertTrue(test_participant_1 in test_group.participant_process_list)
         self.assertTrue(test_participant_2 in test_group.participant_process_list)
-        self.assertEqual(test_group.board_process.pointer, 0)
+        self.assertEqual(test_group.board_process.board.pointer, 0)
         self.assertNotEqual(test_board_sequence, test_group.board_process.board.sequence_str)
         game.delete_group(test_group)
 
