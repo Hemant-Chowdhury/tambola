@@ -25,8 +25,7 @@ In order to win in Tambola or Bingo, you need to match winning variations the ea
 - Get random numbers from board (1-90) and mark the numbers in tickets if present
 - Start a new game by refreshing the board and deleting the tickets in a group
 - Automatic save the game and start from where you left next time
-
-### Upcoming Features
 - Share the tickets by exporting the ticket as image
-- Add variations for the game and manage the variations when the game is running
 
+### Features for future
+- Add variations for the game and manage the variations when the game is running
